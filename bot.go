@@ -1,8 +1,8 @@
 package main
 
 import (
+	"Geonavigator-bot/coordinats"
 	"log"
-	"mskconverter/coordinats"
 	"github.com/go-telegram-bot-api/telegram-bot-api"
 )
 
@@ -25,24 +25,24 @@ func main() {
 			continue
 		}
 		switch update.Message.Text {
-			case "/start":
-				startMessage := tgbotapi.NewMessage(update.Message.Chat.ID, description)
-				bot.Send(startMessage)
-			default:
-				mskCoord, err := coordinats.ParseMSKCoordinate(update.Message.Text)
-				if err != nil {
-					errorMess := tgbotapi.NewMessage(update.Message.Chat.ID, err.Error())
-					bot.Send(errorMess)
-					continue
-				}
-				wgsCoord, err := mskCoord.MSKToWGS()
-				if err != nil {
-					errorMess := tgbotapi.NewMessage(update.Message.Chat.ID, err.Error())
-					bot.Send(errorMess)
-					continue
-				}
-				location := tgbotapi.NewLocation(update.Message.Chat.ID, wgsCoord.Lat, wgsCoord.Long)
-				bot.Send(location)
+		case "/start":
+			startMessage := tgbotapi.NewMessage(update.Message.Chat.ID, description)
+			bot.Send(startMessage)
+		default:
+			mskCoord, err := coordinats.ParseMSKCoordinate(update.Message.Text)
+			if err != nil {
+				errorMess := tgbotapi.NewMessage(update.Message.Chat.ID, err.Error())
+				bot.Send(errorMess)
+				continue
+			}
+			wgsCoord, err := mskCoord.MSKToWGS()
+			if err != nil {
+				errorMess := tgbotapi.NewMessage(update.Message.Chat.ID, err.Error())
+				bot.Send(errorMess)
+				continue
+			}
+			location := tgbotapi.NewLocation(update.Message.Chat.ID, wgsCoord.Lat, wgsCoord.Long)
+			bot.Send(location)
 		}
 	}
 }
